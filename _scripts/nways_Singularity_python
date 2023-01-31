@@ -1,0 +1,86 @@
+# Copyright (c) 2021 NVIDIA Corporation.  All rights reserved. 
+
+# To build the singularity container, run: $  singularity build --fakeroot nways_p.simg nways_Singularity_python
+# To copy the content of the container: $ singularity run nways_p.simg cp -rT /labs ~/labs
+# To run: $ singularity run --nv nways_p.simg jupyter-lab --notebook-dir=~/labs
+# Finally, open http://localhost:8888/
+
+Bootstrap: docker
+#FROM:  nvidia/cuda:11.2.2-devel-ubuntu20.04
+FROM: nvidia/cuda:11.4.2-devel-ubuntu20.04
+
+%environment
+    export XDG_RUNTIME_DIR=  
+    export PATH="$PATH:/usr/local/bin:/usr/bin"
+    export PATH=/opt/nvidia/nsight-systems/2022.1.1/bin:/opt/nvidia/nsight-compute/2022.1.1:/bin:/usr/local/cuda/bin$PATH
+    export LD_LIBRARY_PATH="/usr/include/python3.8:/usr/local/lib:/usr/local/lib/python3.8/dist-packages:/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+    
+
+%post
+    build_tmp=$(mktemp -d) && cd ${build_tmp}
+
+#####
+# Read https://forums.developer.nvidia.com/t/notice-cuda-linux-repository-key-rotation/212772
+    apt-key del 7fa2af80
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
+#####
+
+    apt-get -y update
+    apt-get -y dist-upgrade 
+    DEBIAN_FRONTEND=noninteractive apt-get -yq install --no-install-recommends python3-dev \
+	    m4 vim-nox emacs-nox nano zip \
+ 	    python3-pip python3-setuptools nginx zip make build-essential libtbb-dev
+    rm -rf /var/lib/apt/cache/* 
+
+    pip3 install --no-cache-dir -U install setuptools pip
+    apt-get -y update
+    apt-get -y install git nvidia-modprobe
+    pip3 install 'chardet>=3.0.2,<3.1.0' 'idna>=2.5,<2.8' 'urllib3>=1.21.1,<1.24' 'certifi>=2017.4.17'
+    pip3 install jupyterlab
+    pip3 install ipywidgets
+    pip3 install gdown
+    pip3 install --upgrade numpy==1.21.1
+   # pip3 install --upgrade numpy==1.19.5
+    #pip3 install --no-cache-dir "cupy-cuda112==9.0.0" \
+    pip3 install --no-cache-dir "cupy-cuda114==10.3.1" \
+    numba==0.53.1 scipy
+
+    #apt-get install --no-install-recommends -y build-essential 
+
+    python3 /labs/_common/dataset_python.py
+
+    touch /labs/python/jupyter_notebook/cupy/RDF.dat
+    touch /labs/python/jupyter_notebook/cupy/Pair_entropy.dat
+    
+# NVIDIA nsight-systems-cli-2022.1.1, nsight-compute-2022.1.1
+    apt-get update -y   
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-transport-https ca-certificates gnupg wget
+   # apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F60F4B3D7FA2AF80
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu2004/amd64/nvidia.pub | apt-key add -
+    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu2004/amd64/ /" >> /etc/apt/sources.list.d/nsight.list 
+    apt-get update -y 
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nsight-systems-cli-2022.1.1 nsight-compute-2022.1.1
+    #rm -rf /var/lib/apt/lists/*
+
+
+
+    apt-get install --no-install-recommends -y build-essential
+    
+    pip3 install --no-cache-dir MDAnalysis
+    
+    chmod -R 777 /labs/python/jupyter_notebook/cupy/RDF.dat
+    chmod -R 777 /labs/python/jupyter_notebook/cupy/Pair_entropy.dat
+    
+    cd /
+    rm -rf ${build_tmp}
+
+%files
+    ../_basic/python/ /labs/python
+    ../_basic/_common/ /labs/_common
+    ../_basic/_start_nways.ipynb /labs
+
+%runscript
+    "$@"
+
+%labels
+    AUTHOR Tosin, Mozhgan

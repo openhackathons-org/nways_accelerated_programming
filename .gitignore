@@ -1,0 +1,21 @@
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+alk.traj.dcd
+*.simg
+*.so*
+*.a
+*.la
+mgpm
+*.o
+*.out
+*/.ses/*
+*/.log/*
+*/not repo/*
+*/.nsys-rep/*
+*/.sqlite/*
+*/.ncu-rep/*
+not repo/
+_test/
+_advanced/
+README_.md
+
