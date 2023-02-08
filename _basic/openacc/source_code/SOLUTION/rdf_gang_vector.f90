@@ -91,8 +91,9 @@ program rdf
       cut = dble(xbox * 0.5);
 
       !pair calculation
-      call nvtxStartRange("Pair Calculation")
+      
       !$acc data copy(g(:)) copyin(x(:,:),z(:,:),y(:,:))
+      call nvtxStartRange("Pair Calculation")
       do iconf=1,nframes
          if (mod(iconf,1).eq.0) print*,iconf
          !$acc parallel loop gang default(present)
@@ -116,8 +117,9 @@ program rdf
             enddo
          enddo
       enddo
-      !$acc end data
       call nvtxEndRange
+      !$acc end data
+      
 
       !entropy calculation
       s2=0.01d0
