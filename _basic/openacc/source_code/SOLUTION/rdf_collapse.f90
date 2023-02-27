@@ -97,6 +97,7 @@ program rdf
          if (mod(iconf,1).eq.0) print*,iconf
          !$acc parallel loop collapse(2) default(present)
          do i=1,natoms
+            !$acc loop
             do j=1,natoms
                dx=x(iconf,i)-x(iconf,j)
                dy=y(iconf,i)-y(iconf,j)

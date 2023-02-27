@@ -98,6 +98,7 @@ program rdf
          if (mod(iconf,1).eq.0) print*,iconf
         !$acc parallel loop collapse(2)
          do i=1,natoms
+            !$acc loop
             do j=1,natoms
                if ( i.eq.1 .and. j.eq.1 ) then
                 print *, "First elemet:", x(iconf,i),y(iconf,i), z(iconf,i)

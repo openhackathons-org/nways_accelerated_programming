@@ -10,7 +10,7 @@
 #include "dcdread.h"
 #include <assert.h>
 #include <omp.h>
-#include <nvToolsExt.h>
+#include <nvtx3/nvToolsExt.h>
 
 void pair_gpu(const double *d_x, const double *d_y, const double *d_z,
 			  unsigned long long int *d_g2, int numatm, int nconf,
@@ -179,6 +179,7 @@ void pair_gpu(const double *d_x, const double *d_y, const double *d_z,
 #pragma acc parallel loop
 		for (int id1 = 0; id1 < numatm; id1++)
 		{
+            #pragma acc loop
 			for (int id2 = 0; id2 < numatm; id2++)
 			{
 				dx = d_x[frame * numatm + id1] - d_x[frame * numatm + id2];
