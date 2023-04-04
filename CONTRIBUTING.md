@@ -35,7 +35,7 @@ Emphasis, including quotes made for emphasis and introduction of new terms shoul
 * A level 1 heading should appear at the top of the notebook as the title of the notebook.
 * A horizontal rule should appear between sections that begin with a level 2 heading.
 
-Please refer to the following template for jupyter notebook styling in the github repository:misc/jupyter_lab_template 
+Please refer to the following template for jupyter notebook styling in the [github](https://github.com/openhackathons-org/gpubootcamp/tree/master/misc).
 
 ## Contributing Labs/Modules
 
@@ -43,22 +43,32 @@ Please refer to the following template for jupyter notebook styling in the githu
 
 Before starting to work on new lab it is important to follow the recommended git structure as shown below to avoid and reformatting:
 
-![Github Directory Structure](misc/images/git_repo_structure.jpg)
+![Github Directory Structure](_basic/_common/images/github_structure.png)
 
-Top level directories consist for 3 folders
-* hpc: This directory contains labs related to HPC(Simulation) and parallel computing 
-* hpc_ai: This directory contains labs related to usage of AI/ML/DL for Science/HPC Simulations
-* ai : This directory consists of labs related to traditional AI/ML/DL techniques and frameworks 
+```
+├── _basic
+│   ├── cuda
+│   ├── iso
+│   ├── openacc
+│   ├── openmp
+│   └── python
+├── LICENSE
+├── README.md
+├── _scripts
+└── start_notebook
+```
+
+- The __basic_ directory contains all of the introductory training materials for CUDA, Standard Languages, OpenMP Offloading, and OpenACC.
+- The __scripts_ directory contains container definition files for each bootcamp type.
+- The __start_notebook_ directory contains started notebooks and it is optional to use.
 
 Each lab will have following files/directories consisting of training material for the lab.
-* jupyter_notebook folder: Consists of jupyter notebooks and its corresponding images.  
-* source_code folder :Source codes are stored in a separate directory because sometime not all clusters may support jupyter notebooks. During such bootcamps, we should be able to use the source codes directly from this directory. Source code folder may optionally contain Makefile especially for HPC labs. 
+* `jupyter_notebook` folder: Consists of jupyter notebooks and its corresponding images.  
+* `source_code` folder: Source codes are stored in a separate directory which contains all the programming lanugaes (C/C++/Fortran). Source code folder may optionally contain Makefile especially for HPC labs. This folder also contains `SOLUTIONS` folder for all the related solutions to that particular lab.  
 * presentations: Consists of presentations for the labs ( pdf format is preferred )
 * Dockerfile and Singularity  : Each lab should have both Docker and Singularity recipes.
  
-The lab optionally may also add custom license in case of any deviation from the top level directory license ( Apache 2.0 ). The base of the module contains individual subdirectory containing versions of the module for languages respectively(C/C++/Fortran…). Each of these directories should contain a directory for individual language translation provided (English, for instance). Each lab translation and programming language combination should have a solutions directory containing correct solutions
-
-Additionally there are two folders "experimental" and  "archived" for labs covering features which are in early access phase ( not stable ) or deprecated features repectively.
+The lab optionally may also add custom license in case of any deviation from the top level directory license ( Apache 2.0 ). 
 
 ### Git Branching
 

@@ -5,7 +5,6 @@
 This repository contains training content for the HPC_Bootcamp materials. This repository includes the following file structure in the initial two levels:
 
 ```
- _advanced
 │   ├── 
 ├── _basic
 │   ├── cuda
@@ -19,11 +18,11 @@ This repository contains training content for the HPC_Bootcamp materials. This r
 └── start_notebook
 ```
 
-- The __advanced_ directory contains all of the advanced training materials for OpenACC, and multiGPU.
 - The __basic_ directory contains all of the introductory training materials for CUDA, Standard Languages, OpenMP Offloading, and OpenACC.
 - The __scripts_ directory contains container definition files for each bootcamp type.
+- The __start_notebook_ directory contains started notebooks and it is optional to use.
 
-Please note there is a container definition file for each content in `_advanced` and `_basic` directories that can be found inside each folder.
+<!--Please note there is a container definition file for each content in `_advanced` and `_basic` directories that can be found inside each folder.-->
 
 ### Building the container using the definition files inside the `_script` folder
 
