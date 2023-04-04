@@ -75,7 +75,7 @@ The lab optionally may also add custom license in case of any deviation from the
 Adding a new feature/lab will follow a forking workflow. Which means a feature branch development will happen on a forked repo which later gets merged into our original project (GPUHackathons.org) repository.
 
 
-![Git Branching Workflow](misc/images/git_branching.jpg)
+![Git Branching Workflow](_basic/_common/images/git_branching.jpg)
 
 The 5 main steps depicted in image above are as follows:
 1. Fork: To create a new lab/feature the GPUHackathons.org repository must be forked. Fork will create a snapshot of GPUHackathons.org repository at the time it was forked. Any new feature/lab that will be developed should be based on the develop branch of the repository.
