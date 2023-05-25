@@ -3,7 +3,6 @@ module readdata
       contains
       
         subroutine readdcd(maxframes,maxatoms,x,y,z,xbox,ybox,zbox,natoms,nframes)
-          use cudafor
           implicit none
           integer i,j
           integer maxframes,maxatoms
@@ -23,16 +22,16 @@ module readdata
           read(10) natoms
           print*,"Total number of frames and atoms are",tframes,natoms
 
-          allocate ( x(maxframes,natoms) )
-          allocate ( y(maxframes,natoms) )
-          allocate ( z(maxframes,natoms) )
+          allocate ( x(natoms,maxframes) )
+          allocate ( y(natoms,maxframes) )
+          allocate ( z(natoms,maxframes) )
 
-          do i = 1,nframes
-              read(10) (d(j),j=1, 6)
+          do j = 1,nframes
+              read(10) (d(i),i=1, 6)
               
-              read(10) (x(i,j),j=1,natoms)
-              read(10) (y(i,j),j=1,natoms)
-              read(10) (z(i,j),j=1,natoms)
+              read(10) (x(i,j),i=1,natoms)
+              read(10) (y(i,j),i=1,natoms)
+              read(10) (z(i,j),i=1,natoms)
           end do
           xbox=d(1)
           ybox=d(3)
@@ -42,13 +41,13 @@ module readdata
 
         end subroutine readdcd
 
-        attributes(global) subroutine pair_calculation( x,y,z,g,natoms,nframes,xbox,ybox,zbox,del,cut)
-          use cudafor
+!@cuf   attributes(global) &
+        subroutine pair_calculation( x,y,z,g,natoms,nframes,xbox,ybox,zbox,del,cut)
           implicit none
-          real*4     :: x(:,:)
-          real*4     :: y(:,:)
-          real*4    :: z(:,:)
-          double precision,intent(inout)    :: g(:)
+          real*4    :: x(natoms,*)
+          real*4    :: y(natoms,*)
+          real*4    :: z(natoms,*)
+          double precision,intent(inout) :: g(*)
           integer, value :: nframes,natoms,ind
           double precision, value :: xbox,ybox,zbox,del,cut
           integer i,j,iconf
@@ -60,17 +59,17 @@ module readdata
           do iconf=1,nframes
            if(i<=natoms .and. j<=natoms) then
 
-             dx=x(iconf,i)-x(iconf,j)
-             dy=y(iconf,i)-y(iconf,j)
-             dz=z(iconf,i)-z(iconf,j)
+             dx=x(i,iconf)-x(j,iconf)
+             dy=y(i,iconf)-y(j,iconf)
+             dz=z(i,iconf)-z(j,iconf)
 
              dx=dx-nint(dx/xbox)*xbox
              dy=dy-nint(dy/ybox)*ybox
              dz=dz-nint(dz/zbox)*zbox
 
              r=dsqrt(dx**2+dy**2+dz**2)
-             ind=int(r/del)+1
              if(r<cut)then
+               ind=int(r/del)+1
                oldvalue = atomicadd(g(ind),1.0d0)
              endif
            endif
@@ -111,9 +110,7 @@ program rdf
       print*,"Going to read coordinates"
       call readdcd(maxframes,maxatoms,x,y,z,xbox,ybox,zbox,natoms,nframes)
       allocate ( g(nbin) )
-      do i=1,nbin 
-        g(i) = 0.0d0
-      end do
+      g = 0.0d0
  
       pi=dacos(-1.0d0)
       vol=xbox*ybox*zbox
@@ -123,7 +120,7 @@ program rdf
       write(*,*) "bin width is : ",del
       cut = dble(xbox * 0.5);
       threads = dim3(16,16,1)
-      blocks = dim3(ceiling(real(natoms)/threads%x), ceiling(real(natoms)/threads%y),1)       
+      blocks = dim3(ceiling(real(natoms)/threads%x), ceiling(real(natoms)/threads%y),1)
       print *, "natoms:, Grid Size:", threads, blocks 
 
        call pair_calculation<<<blocks,threads>>>(x,y,z,g,natoms,nframes,xbox,ybox,zbox,del,cut)
