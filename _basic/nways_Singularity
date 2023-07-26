@@ -6,7 +6,7 @@
 # Finally, open http://localhost:8888/
 
 Bootstrap: docker
-FROM: nvcr.io/nvidia/nvhpc:22.7-devel-cuda_multi-ubuntu20.04
+FROM: nvcr.io/nvidia/nvhpc:23.5-devel-cuda_multi-ubuntu20.04
 
 %environment
     export XDG_RUNTIME_DIR=

@@ -1,5 +1,5 @@
 # Nways to GPU programming
-This repository contains mini applications for GPU Bootcamps (**Tested on NVIDIA driver 440.82**). This bootcamp comprises N-Ways to GPU programming implemented with the following programming approaches:
+This repository contains mini applications for GPU Bootcamps (**Tested on NVIDIA driver 525.105.17**). This bootcamp comprises N-Ways to GPU programming implemented with the following programming approaches:
 
 **C programming language**
   - std::par
