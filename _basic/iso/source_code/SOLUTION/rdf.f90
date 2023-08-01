@@ -1,3 +1,8 @@
+!/////////////////////////////////////////////////////////////////////////////////////////
+!// Author: Manish Agarwal and Gourav Shrivastava  , IIT Delhi
+!/////////////////////////////////////////////////////////////////////////////////////////
+
+! Copyright (c) 2021 NVIDIA Corporation.  All rights reserved.
 
 module readdata
       contains
@@ -20,29 +25,30 @@ module readdata
       read(10) natoms
       print*,"Total number of frames and atoms are",tframes,natoms
 
-      allocate ( x(maxframes,natoms) )
-      allocate ( y(maxframes,natoms) )
-      allocate ( z(maxframes,natoms) )
+      allocate ( x(natoms,maxframes) )
+      allocate ( y(natoms,maxframes) )
+      allocate ( z(natoms,maxframes) )
 
-           do i = 1,nframes
-           read(10) (d(j),j=1, 6)
+      do j = 1,nframes
+           read(10) (d(i),i=1, 6)
               
-           read(10) (x(i,j),j=1,natoms)
-           read(10) (y(i,j),j=1,natoms)
-           read(10) (z(i,j),j=1,natoms)
-          end do
-          xbox=d(1)
-          ybox=d(3)
-          zbox=d(6)
-          print*,"File reading is done: xbox,ybox,zbox",xbox,ybox,zbox
-          return
+           read(10) (x(i,j),i=1,natoms)
+           read(10) (y(i,j),i=1,natoms)
+           read(10) (z(i,j),i=1,natoms)
+      end do
+      
+      xbox=d(1)
+      ybox=d(3)
+      zbox=d(6)
+      
+      print*,"File reading is done: xbox,ybox,zbox",xbox,ybox,zbox
+      return
 
       end subroutine readdcd
  end module readdata
 
 program rdf
       use readdata
-      !use cudafor
       use nvtx
       implicit none
       integer n,i,j,iconf,ind
@@ -64,13 +70,10 @@ program rdf
       open(23,file='RDF.dat',status='unknown')
       open(24,file='Pair_entropy.dat',status='unknown')
 
-
       nframes=10
          
       call cpu_time(start)
 
-      !x=0;y=0;z=0
-      !g=0
       print*,"Going to read coordinates"
       call nvtxStartRange("Read File")
       call readdcd(maxframes,maxatoms,x,y,z,xbox,ybox,zbox,natoms,nframes)
@@ -86,43 +89,41 @@ program rdf
       del=xbox/dble(2.0*nbin)
       write(*,*) "bin width is : ",del
       cut = dble(xbox * 0.5);
+
+      !pair calculation
       call nvtxStartRange("Pair Calculation")
       do iconf=1,nframes
          if (mod(iconf,1).eq.0) print*,iconf
-         do concurrent(i=1 : natoms, j=1:natoms)
-               dx=x(iconf,i)-x(iconf,j)
-               dy=y(iconf,i)-y(iconf,j)
-               dz=z(iconf,i)-z(iconf,j)
+         do concurrent(i=1:natoms, j=1:natoms)
+            dx=x(i,iconf)-x(j,iconf)
+            dy=y(i,iconf)-y(j,iconf)
+            dz=z(i,iconf)-z(j,iconf)
 
-               dx=dx-nint(dx/xbox)*xbox
-               dy=dy-nint(dy/ybox)*ybox
-               dz=dz-nint(dz/zbox)*zbox
+            dx=dx-nint(dx/xbox)*xbox
+            dy=dy-nint(dy/ybox)*ybox
+            dz=dz-nint(dz/zbox)*zbox
    
-               r=dsqrt(dx**2+dy**2+dz**2)
-               ind=int(r/del)+1
-               !if (ind.le.nbin) then
-               if(r<cut)then
-                  !$acc atomic
-                  g(ind)=g(ind)+1.0d0
-                  !g(ind) = atomicadd(g(ind),1.0d0)
-               endif
+            r=dsqrt(dx**2+dy**2+dz**2)
+            if(r<cut)then
+                ind=int(r/del)+1
+                !$acc atomic
+                g(ind)=g(ind)+1.0d0
+            endif
          enddo
       enddo
       call nvtxEndRange
-     
 
-       s2=0.01d0
-       s2bond=0.01d0 
-       const=(4.0d0/3.0d0)*pi*rho
-       call nvtxStartRange("Entropy Calculation")
-       do i=1,nbin
+      !entropy calculation
+      s2=0.01d0
+      s2bond=0.01d0 
+      const=(4.0d0/3.0d0)*pi*rho
+      call nvtxStartRange("Entropy Calculation")
+      do i=1,nbin
           rlower=dble((i-1)*del)
           rupper=rlower+del
           nideal=const*(rupper**3-rlower**3)
           g(i)=g(i)/(dble(nframes)*dble(natoms)*nideal)
           r=dble(i)*del
-          !print*,i+del,i,rupper,rlower,r
-          !print*,r
           if (r.lt.2.0) then
             gr=0.0
           else
@@ -146,13 +147,13 @@ program rdf
           
           rf=dble(i-.5)*del
           write(23,*) rf,g(i)
-       enddo
-       call nvtxEndRange
-          write(24,*)"s2      : ",s2
-          write(24,*)"s2bond  : ",s2bond
+      enddo
+      call nvtxEndRange
+
+      write(24,*)"s2      : ",s2
+      write(24,*)"s2bond  : ",s2bond
       call cpu_time(finish)
-       print*,"starting at time",start,"and ending at",finish
+      print*,"starting at time",start,"and ending at",finish
       stop
       deallocate(x,y,z,g)
 end
-

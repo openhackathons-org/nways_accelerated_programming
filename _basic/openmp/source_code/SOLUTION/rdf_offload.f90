@@ -25,16 +25,16 @@ module readdata
       read(10) natoms
       print*,"Total number of frames and atoms are",tframes,natoms
 
-      allocate ( x(maxframes,natoms) )
-      allocate ( y(maxframes,natoms) )
-      allocate ( z(maxframes,natoms) )
+      allocate ( x(natoms,maxframes) )
+      allocate ( y(natoms,maxframes) )
+      allocate ( z(natoms,maxframes) )
 
-      do i = 1,nframes
-           read(10) (d(j),j=1, 6)
+      do j = 1,nframes
+           read(10) (d(i),i=1, 6)
               
-           read(10) (x(i,j),j=1,natoms)
-           read(10) (y(i,j),j=1,natoms)
-           read(10) (z(i,j),j=1,natoms)
+           read(10) (x(i,j),i=1,natoms)
+           read(10) (y(i,j),i=1,natoms)
+           read(10) (z(i,j),i=1,natoms)
       end do
       
       xbox=d(1)
@@ -98,18 +98,17 @@ program rdf
          !$omp target teams distribute parallel do private(dx,dy,dz,r,ind)
          do i=1,natoms
             do j=1,natoms
-               dx=x(iconf,i)-x(iconf,j)
-               dy=y(iconf,i)-y(iconf,j)
-               dz=z(iconf,i)-z(iconf,j)
+               dx=x(i,iconf)-x(j,iconf)
+               dy=y(i,iconf)-y(j,iconf)
+               dz=z(i,iconf)-z(j,iconf)
 
                dx=dx-nint(dx/xbox)*xbox
                dy=dy-nint(dy/ybox)*ybox
                dz=dz-nint(dz/zbox)*zbox
    
                r=dsqrt(dx**2+dy**2+dz**2)
-               ind=int(r/del)+1
-               !if (ind.le.nbin) then
                if(r<cut)then
+                  ind=int(r/del)+1
                   !$omp atomic
                   g(ind)=g(ind)+1.0d0
                endif
