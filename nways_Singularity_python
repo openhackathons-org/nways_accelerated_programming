@@ -75,9 +75,9 @@ FROM: nvidia/cuda:11.4.2-devel-ubuntu20.04
     rm -rf ${build_tmp}
 
 %files
-    ../_basic/python/ /labs/python
-    ../_basic/_common/ /labs/_common
-    ../_basic/_start_nways.ipynb /labs
+    _basic/python/ /labs/python
+    _basic/_common/ /labs/_common
+    _basic/_start_nways.ipynb /labs
 
 %runscript
     "$@"

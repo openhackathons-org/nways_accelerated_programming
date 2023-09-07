@@ -22,12 +22,12 @@ RUN pip3 install ipywidgets
 RUN apt-get update -y
 
 # TO COPY the data
-COPY openacc/ /labs/openacc
-COPY openmp/ /labs/openmp
-COPY _common/ /labs/_common
-COPY iso/ /labs/iso
-COPY cuda/ /labs/cuda
-COPY _start_nways.ipynb /labs
+COPY _basic/openacc/ /labs/openacc
+COPY _basic/openmp/ /labs/openmp
+COPY _basic/_common/ /labs/_common
+COPY _basic/iso/ /labs/iso
+COPY _basic/cuda/ /labs/cuda
+COPY _basic/_start_nways.ipynb /labs
 
 RUN python3 /labs/_common/dataset.py
 

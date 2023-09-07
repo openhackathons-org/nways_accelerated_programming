@@ -46,12 +46,12 @@ FROM: nvcr.io/nvidia/nvhpc:23.5-devel-cuda_multi-ubuntu20.04
     rm -rf ${build_tmp}
 
 %files
-    ../_basic/openacc/ /labs/openacc
-    ../_basic/openmp/ /labs/openmp
-    ../_basic/_common/ /labs/_common
-    ../_basic/iso/ /labs/iso
-    ../_basic/cuda/ /labs/cuda
-    ../_basic/_start_nways.ipynb /labs
+    _basic/openacc/ /labs/openacc
+    _basic/openmp/ /labs/openmp
+    _basic/_common/ /labs/_common
+    _basic/iso/ /labs/iso
+    _basic/cuda/ /labs/cuda
+    _basic/_start_nways.ipynb /labs
     
 %runscript
     "$@"
