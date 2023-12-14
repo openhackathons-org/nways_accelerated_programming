@@ -7,7 +7,7 @@
 
 Bootstrap: docker
 #FROM:  nvidia/cuda:11.2.2-devel-ubuntu20.04
-FROM: nvidia/cuda:11.4.2-devel-ubuntu20.04
+FROM: nvcr.io/nvidia/cuda:11.4.2-devel-ubuntu20.04
 
 %environment
     export XDG_RUNTIME_DIR=  
