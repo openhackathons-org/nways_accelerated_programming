@@ -1,13 +1,13 @@
 # Copyright (c) 2021 NVIDIA Corporation.  All rights reserved. 
 
-# To build the docker container, run: $  sudo docker build -f nways_Dockerfile -t nways:c .
-# To run: $ sudo docker run --rm -it --runtime nvidia -p 8888:8888 nways:c
+# To build the docker container, run: $  sudo docker build -f nways_Dockerfile -t nways:cf .
+# To run: $ sudo docker run --rm -it --runtime nvidia -p 8888:8888 nways:cf
 # Finally, open http://localhost:8888/
 
-FROM nvcr.io/nvidia/nvhpc:23.5-devel-cuda_multi-ubuntu20.04
+FROM nvcr.io/nvidia/nvhpc:24.1-devel-cuda_multi-ubuntu22.04
 
 RUN apt-get -y update && \
-        DEBIAN_FRONTEND=noninteractive apt-get -yq install --no-install-recommends python3-pip python3-setuptools nginx zip make build-essential libtbb-dev && \
+        DEBIAN_FRONTEND=noninteractive apt-get -yq install --no-install-recommends python3-pip python3-setuptools nginx zip make build-essential libtbb-dev python3-dev && \
         rm -rf /var/lib/apt/lists/* && \
         pip3 install --upgrade pip &&\
         pip3 install gdown
@@ -21,6 +21,12 @@ RUN pip3 install ipywidgets
 ############################################
 RUN apt-get update -y
 
+RUN git clone https://github.com/NVIDIA/nvbandwidth.git
+RUN cd nvbandwidth && apt update && apt install -y libboost-program-options-dev && ./debian_install.sh
+RUN cd ..
+############################################
+RUN apt-get update -y
+
 # TO COPY the data
 COPY _basic/openacc/ /labs/openacc
 COPY _basic/openmp/ /labs/openmp
@@ -28,6 +34,7 @@ COPY _basic/_common/ /labs/_common
 COPY _basic/iso/ /labs/iso
 COPY _basic/cuda/ /labs/cuda
 COPY _basic/_start_nways.ipynb /labs
+COPY _basic/memory_coherent/ /labs/memory_coherent
 
 RUN python3 /labs/_common/dataset.py
 

@@ -4,7 +4,7 @@ FC := nvfortran
 CC := nvc++
 
 FLAGS := -O3 -w 
-ACCFLAGS := -acc=multicore -Minfo=accel
+ACCFLAGS := -stdpar=multicore -Minfo
 
 NVTXLIB_F := -lnvhpcwrapnvtx
 
@@ -16,7 +16,7 @@ rdf_f: rdf.f90
 	${FC} ${FLAGS} ${ACCFLAGS} -o rdf_f rdf.f90 ${NVTXLIB_F} 
 
 rdf_c: rdf.cpp
-	${CC} ${FLAGS} ${ACCFLAGS} -o rdf_c rdf.cpp ${NVTXLIB_C} 
+	${CC} ${FLAGS} -std=c++17 ${ACCFLAGS} -o rdf_c rdf.cpp -fopenmp ${NVTXLIB_C} 
 
 clean:
 	rm -f *.o rdf_f rdf_c

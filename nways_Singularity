@@ -6,7 +6,7 @@
 # Finally, open http://localhost:8888/
 
 Bootstrap: docker
-FROM: nvcr.io/nvidia/nvhpc:23.5-devel-cuda_multi-ubuntu20.04
+FROM nvcr.io/nvidia/nvhpc:24.1-devel-cuda_multi-ubuntu22.04
 
 %environment
     export XDG_RUNTIME_DIR=
@@ -19,7 +19,7 @@ FROM: nvcr.io/nvidia/nvhpc:23.5-devel-cuda_multi-ubuntu20.04
     apt-get -y dist-upgrade 
     DEBIAN_FRONTEND=noninteractive apt-get -yq install --no-install-recommends \
 	    m4 vim-nox emacs-nox nano zip\
- 	    python3-pip python3-setuptools git-core inotify-tools \
+ 	    python3-pip python3-setuptools git-core inotify-tools python3-dev \
 	    curl git-lfs \
 	    build-essential libtbb-dev
     rm -rf /var/lib/apt/cache/* 
@@ -52,6 +52,7 @@ FROM: nvcr.io/nvidia/nvhpc:23.5-devel-cuda_multi-ubuntu20.04
     _basic/iso/ /labs/iso
     _basic/cuda/ /labs/cuda
     _basic/_start_nways.ipynb /labs
+    _basic/memory_coherent/ /labs/memory_coherent
     
 %runscript
     "$@"
