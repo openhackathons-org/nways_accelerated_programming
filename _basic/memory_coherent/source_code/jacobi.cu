@@ -184,14 +184,14 @@ double single_gpu(const int nx, const int ny, const int iter_max, float* const a
 	l2_norm = *l2_norm_h;
 	l2_norm = std::sqrt(l2_norm);
 
-        iter++;
 	if ((iter % 100) == 0) printf("%5d, %0.6f\n", iter, l2_norm);
+    iter++;
 
         std::swap(a_new, a);
     }
     nvtxRangePop();
     double stop = omp_get_wtime();
-    printf("\n L2 Norm is %f", l2_norm);
+    printf("\n L2 Norm is %f\n", l2_norm);
     CUDA_RT_CALL(cudaMemcpy(a_ref_h, a, nx * ny * sizeof(float), cudaMemcpyDeviceToHost));
 
     CUDA_RT_CALL(cudaFreeHost(l2_norm_h));

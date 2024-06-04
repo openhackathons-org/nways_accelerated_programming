@@ -182,14 +182,13 @@ double single_gpu(const int nx, const int ny, const int iter_max, float* a, floa
 	l2_norm=l2_norm_local[0];
 	//l2_norm = *l2_norm_h;
 	l2_norm = std::sqrt(l2_norm);
-
-        iter++;
+       
 	if ((iter % 100) == 0) printf("%5d, %0.6f\n", iter, l2_norm);
-
+    iter++;
         std::swap(a_new, a);
     }
     nvtxRangePop();
-    printf("\n L2 Norm %f", l2_norm);
+    printf("\n L2 Norm %f\n", l2_norm);
     double stop = omp_get_wtime();
 
 
