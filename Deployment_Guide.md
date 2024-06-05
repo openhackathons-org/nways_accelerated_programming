@@ -38,7 +38,7 @@ For instance:
   4. Now, open the jupyter lab in browser: http://localhost:8888, and start working on the lab by clicking on the `_start_nways.ipynb` notebook
 
 
-- To build the singularity container, for N-Ways to GPU Programming-C-Fortran, follow the below steps:  
+- To build the docker container, for N-Ways to GPU Programming-C-Fortran, follow the below steps:  
 
   1. `sudo docker build -f nways_Dockerfile -t openhackathons:nways_CFortran .`
   2. `sudo docker run --rm -it --gpus=all -p 8888:8888 openhackathons:nways_CFortran`

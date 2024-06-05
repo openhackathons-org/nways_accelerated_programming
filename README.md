@@ -14,6 +14,7 @@ The content is structured in multiple options covering the following:
   - Lab 2: OpenACC
   - Lab 3: OpenMP offloading
   - Lab 4: CUDA
+  - Lab 5: Memory Coherent Architectures
 
 - Option 2: N-Ways to GPU Programming-Python
   - NVIDIA® Nsight™ Systems
