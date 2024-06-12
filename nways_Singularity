@@ -11,7 +11,6 @@ FROM: nvcr.io/nvidia/nvhpc:24.1-devel-cuda_multi-ubuntu22.04
 %environment
     export XDG_RUNTIME_DIR=
     export PATH="$PATH:/usr/local/bin:/opt/anaconda3/bin:/usr/bin"
-    export VER=24.1
 
 %post
     #build_tmp=$(mktemp -d) && cd ${build_tmp}
