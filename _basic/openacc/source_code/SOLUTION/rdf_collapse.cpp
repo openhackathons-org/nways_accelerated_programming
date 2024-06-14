@@ -184,7 +184,6 @@ void pair_gpu(const double *d_x, const double *d_y, const double *d_z,
 #pragma acc parallel loop collapse(2) default(present)
 		for (int id1 = 0; id1 < numatm; id1++)
 		{
-            #pragma acc loop
 			for (int id2 = 0; id2 < numatm; id2++)
 			{
 				dx = d_x[frame * numatm + id1] - d_x[frame * numatm + id2];
