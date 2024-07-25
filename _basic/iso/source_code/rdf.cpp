@@ -12,14 +12,11 @@
 #include <algorithm>
 #include <vector>
 #include <atomic>
+#include <ranges>      // for std::views::iota_view
 #include <nvtx3/nvToolsExt.h>
 
 //Note: The addition of execution header file
 #include <execution>
-
-#ifdef USE_COUNTING_ITERATOR
-#include <thrust/iterator/counting_iterator.h>
-#endif
 
 void pair_gpu(double *d_x, double *d_y, double *d_z,
 			  std::atomic<int> *d_g2, int numatm, int nconf,
@@ -174,21 +171,16 @@ void pair_gpu(double *d_x, double *d_y, double *d_z,
 	double del = box / (2.0 * d_bin);
 	cut = box * 0.5;
 
-#ifndef USE_COUNTING_ITERATOR
-	std::vector<unsigned int> indices(numatm * numatm);
-	std::generate(indices.begin(), indices.end(), [n = 0]() mutable { return n++; });
-#endif
+    auto res = std::ranges::views::iota(0, numatm*numatm);
 
 	std::cout << "\n" << nconf << " "<< numatm; 
 	for (int frame = 0; frame < nconf; frame++)
 	{
 		std::cout << "\n" << frame;
-#ifdef USE_COUNTING_ITERATOR
+
 		// Todo : Use the right parallel execution policy and algorithm
-		std::Fill parallel algorithm Here(Fill execution policy here, thrust::counting_iterator<unsigned int>(0u), thrust::counting_iterator<unsigned int>(numatm * numatm),
-#else
-		//std::Fill parallel algorithm Here(execution policy here, indices.begin(), indices.end(),
-#endif
+		std::Fill parallel algorithm Here(Fill execution policy here, res.begin(), res.end(),
+		
 										  [d_x, d_y, d_z, d_g2, numatm, frame, xbox, ybox, zbox, cut, del](unsigned int index) {
 											  int id1 = index / numatm;
 											  int id2 = index % numatm;

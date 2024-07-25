@@ -3,7 +3,9 @@
 CC := nvc++
 CFLAGS := -O3 -w -ldl
 ACCFLAGS := -Minfo=accel
-NVTXLIB_c := -I/opt/nvidia/hpc_sdk/Linux_x86_64/23.5/cuda/11.8/include -L/opt/nvidia/hpc_sdk/Linux_x86_64/23.5/cuda/11.8/lib64 -lnvToolsExt
+VER=$(shell nvc -dumpversion)
+NVARCH=$(shell uname -s)_$(shell uname -m)
+NVTXLIB_c := -I/opt/nvidia/hpc_sdk/$(NVARCH)/$(VER)/cuda/include
 
 FC := nvfortran
 FLAGS := -O3 -w 
