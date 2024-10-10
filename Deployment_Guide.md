@@ -17,7 +17,7 @@ The material is also tested to be working with NVIDIA V100 and T4 GPUs, please c
 
 ### Tested environment
 
-These materials was tested with both Docker and Singularity on an NVIDIA A100 GPU in an x86-64 platform installed with a driver version of `525.105.17`. 
+These materials was tested with both Docker and Singularity on both NVIDIA A100 and H100 GPUs in an x86-64 platform installed with a driver version of `550.90.07`. 
 
 ### Deploying with container 
 
